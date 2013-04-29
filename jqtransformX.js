@@ -1,7 +1,7 @@
 /**
  *	Name: jqtransformX
  *	Author: swe
- *	Version: 0.1.0.0
+ *	Version: 0.1.0.1
  *
  *
  *	Description:
@@ -274,7 +274,7 @@
 				$trigger.click(function(){
 					if (!$item.attr('disabled'))
 					{
-						$input.trigger('click').trigger('change');
+						$item.trigger('click').trigger('change');
 					}				
 					
 					return false;
@@ -348,7 +348,7 @@
 				$trigger.click(function(){
 					if (!$item.attr('disabled'))
 					{
-						$input.trigger('click').trigger('change');
+						$item.trigger('click').trigger('change');
 						
 						$('input[name="'+$item.attr('name')+'"]',item.form).not($item).each(function(){
 							var other = $(this);
