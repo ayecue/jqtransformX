@@ -1,7 +1,7 @@
 /**
  *	Name: jqtransformX
  *	Author: swe
- *	Version: 0.1.0.3
+ *	Version: 0.1.0.5
  *
  *
  *	Description:
@@ -126,11 +126,9 @@
 		transformInputButton : function(element,_){
 			var stack = [];
 			
-			for (var index = 0, length = element.length; index < length; index++)
-			{
-				(function(){
-					var item = element[index],
-						$item = $(item);
+			for (var index = 0, length = element.length; index < length; 
+				(function(item){
+					var $item = $(item);
 						
 					if($item.hasClass('jqTransformButton'))
 					{
@@ -170,7 +168,11 @@
 								throw 'Double free.';
 							}
 						
-							$button.replaceWith($copy);
+							$button
+								.unbind('hover')
+								.unbind('mousedown')
+								.unbind('mouseup')
+								.replaceWith($copy);
 							
 							item = $item = $copy = $button = label = null;
 						},
@@ -178,10 +180,10 @@
 						context : element.context
 					};
 					
-					$.data(item,'jqTransform',object);
+					$item.data('jqTransform',object);
 					stack.push(object);
-				}).call(this);
-			}
+				})(element[index++])
+			);
 			
 			return stack;
 		},
@@ -191,11 +193,9 @@
 		transformInputText : function(element,_){
 			var stack = [];
 			
-			for (var index = 0, length = element.length; index < length; index++)
-			{
-				(function(){
-					var item = element[index],
-						$item = $(item);
+			for (var index = 0, length = element.length; index < length;
+				(function(item){
+					var $item = $(item);
 						
 					if($item.hasClass('jqTransformHidden') || !$item.is('input'))
 					{
@@ -251,10 +251,10 @@
 						context : element.context
 					};
 					
-					$.data(item,'jqTransform',object);
+					$item.data('jqTransform',object);
 					stack.push(object);
-				}).call(this);
-			}
+				})(element[index++])
+			);
 			
 			return stack;
 		},
@@ -264,11 +264,9 @@
 		transformCheckbox : function(element,_){
 			var stack = [];
 			
-			for (var index = 0, length = element.length; index < length; index++)
-			{
-				(function(){
-					var item = element[index],
-						$item = $(item);
+			for (var index = 0, length = element.length; index < length;
+				(function(item){
+					var $item = $(item);
 						
 					if($item.hasClass('jqTransformHidden'))
 					{
@@ -327,10 +325,10 @@
 						context : element.context
 					};
 					
-					$.data(item,'jqTransform',object);
+					$item.data('jqTransform',object);
 					stack.push(object);
-				}).call(this);
-			}
+				})(element[index++])
+			);
 			
 			return stack;
 		},
@@ -340,11 +338,9 @@
 		transformRadio : function(element,_){
 			var stack = [];
 			
-			for (var index = 0, length = element.length; index < length; index++)
-			{
-				(function(){
-					var item = element[index],
-						$item = $(item);
+			for (var index = 0, length = element.length; index < length;
+				(function(item){
+					var $item = $(item);
 						
 					if($item.hasClass('jqTransformHidden'))
 					{
@@ -409,10 +405,10 @@
 						context : element.context
 					};
 					
-					$.data(item,'jqTransform',object);
+					$item.data('jqTransform',object);
 					stack.push(object);
-				}).call(this);
-			}
+				})(element[index++])
+			);
 			
 			return stack;
 		},
@@ -422,11 +418,9 @@
 		transformTextarea : function(element,_){
 			var stack = [];
 			
-			for (var index = 0, length = element.length; index < length; index++)
-			{
-				(function(){
-					var item = element[index],
-						$item = $(item);
+			for (var index = 0, length = element.length; index < length; 
+				(function(item){
+					var $item = $(item);
 						
 					if($item.hasClass('jqtransformdone')) 
 					{
@@ -489,10 +483,10 @@
 						context : element.context
 					};
 					
-					$.data(item,'jqTransform',object);
+					$item.data('jqTransform',object);
 					stack.push(object);
-				}).call(this);
-			}
+				})(element[index++])
+			);
 			
 			return stack;
 		},
@@ -502,11 +496,9 @@
 		transformSelect : function(element,_){
 			var stack = [];
 			
-			for (var index = 0, length = element.length; index < length; index++)
-			{
-				(function(){
-					var item = element[index],
-						$item = $(item);
+			for (var index = 0, length = element.length; index < length;
+				(function(item){
+					var $item = $(item);
 					
 					if ($item.hasClass('jqTransformHidden') || !!$item.attr('multiple'))
 					{
@@ -606,6 +598,31 @@
 						row : selectedRow,
 						rowIndex : selectedIndex,
 						label : label,
+						/* Get/Set Value */
+						val : function(to){
+							if (!!to)
+							{
+								var options = $item.children('option'),
+									index = options.length,
+									current;
+									
+								while(index--)
+								{
+									current = $(options[index]);
+								
+									if (to == current.val() || to == current.html())
+									{
+										selectedRow[index].trigger('click');
+										
+										break;
+									}
+								}
+							
+								return true;
+							}
+							
+							return $item.children('option:eq('+selectedIndex+')').val();
+						},
 						/* Clear everything */
 						clear : function(){
 							if (!item)
@@ -629,10 +646,10 @@
 						context : element.context
 					};
 					
-					$.data(item,'jqTransform',object);
+					$item.data('jqTransform',object);
 					stack.push(object);
-				}).call(this);
-			}
+				})(element[index++])
+			);
 			
 			return stack;
 		}
@@ -658,7 +675,7 @@
 			
 		if ($item.hasClass('jqtransformdone') || $item.hasClass('jqTransformHidden'))
 		{
-			return $.data(item,'jqTransform');
+			return $item.data('jqTransform');
 		}
 		
 		return false;
@@ -673,7 +690,7 @@
 				return;
 			}
 				
-			$.data(item, 'jqTransform', new transform($item,options || {}));
+			$item.data('jqTransform', new transform($item,options || {}));
 			$item.addClass('jqtransformdone');
 		});
 	};
